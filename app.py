@@ -43,18 +43,18 @@ number_entry = tk.Entry(window)
 number_entry.pack()
 
 #Choose big labels
-parambig = tk.IntVar()
-check_big = tk.Checkbutton(window, text="big labels (falcon tubes)", variable=parambig)
+parambig = tk.IntVar(value=1)
+check_big = tk.Checkbutton(window, text="big labels (dbgi_123456)", variable=parambig)
 check_big.pack()
 
 #Choose small labels extraction
-paramsmall1 = tk.IntVar()
-check_small1 = tk.Checkbutton(window, text="small labels for extraction", variable=paramsmall1)
+paramsmall1 = tk.IntVar(value=1)
+check_small1 = tk.Checkbutton(window, text="small labels for extraction (dbgi_123456_01)", variable=paramsmall1)
 check_small1.pack()
 
 #Choose small labels for injection
-paramsmall2 = tk.IntVar()
-check_small2 = tk.Checkbutton(window, text="small labels for extraction", variable=paramsmall2)
+paramsmall2 = tk.IntVar(value=1)
+check_small2 = tk.Checkbutton(window, text="small labels for injection (dbgi_123456_01_01)", variable=paramsmall2)
 check_small2.pack()
 
 #confirm button
