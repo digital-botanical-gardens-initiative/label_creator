@@ -42,7 +42,7 @@ login_url = base_url + '/auth/login'
 
 # Define the email and password for authentication
 email = 'edouard.bruelhart@unifr.ch'
-password = '861510Eb.98'
+password = 'pass'
 
 # Create a session object for making requests
 session = requests.Session()
