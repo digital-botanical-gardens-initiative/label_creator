@@ -1,4 +1,7 @@
 import tkinter as tk
+from tkinter import filedialog
+import pandas as pd
+import os
 
 class MainPage(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -93,24 +96,21 @@ class Window1(tk.Frame):
     def show_values(self):
         # Retrieve the entered values
         username = self.username.get()
+        os.environ["username"] = username
         password = self.password.get()
+        os.environ["password"] = password
         number = self.number.get()
+        os.environ["number"] = number
         location = self.location.get()
-        parambig = self.parambig.get()
-        paramsmall1 = self.paramsmall1.get()
-        paramsmall2 = self.paramsmall2.get()
+        os.environ["location"] = location
+        parambig1 = self.parambig.get()
+        os.environ["parambig1"] = parambig1
+        paramsmall11 = self.paramsmall1.get()
+        os.environ["paramsmall11"] = paramsmall11
+        paramsmall21 = self.paramsmall2.get()
+        os.environ["paramsmall12"] = paramsmall21
 
-        # Set the minimum size for Window 2
-        self.master.minsize(500, 300)
 
-        # Print the entered values
-        print("Username:", username)
-        print("Password:", password)
-        print("Number:", number)
-        print("Location:", location)
-        print("Big labels:", parambig)
-        print("extraction labels:", paramsmall1)
-        print("injection labels:", paramsmall2)
 
 class Window2(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -126,6 +126,11 @@ class Window2(tk.Frame):
         # Create widgets for the main page
         label = tk.Label(self, text="Print already existing labels using a table")
         label.pack()
+
+        import_label = tk.Label(self, text="CSV is expected to have a unique column containing codes in format dbgi_123456, without header")
+        import_label.pack()
+        import_button = tk.Button(self, text="Import your CSV", command=self.import_csv)
+        import_button.pack()
 
         # Create text entry fields
         number_ext_label = tk.Label(self, text="Number of the extraction (let empty if you want big labels):")
@@ -158,6 +163,12 @@ class Window2(tk.Frame):
         button_back = tk.Button(self, text="Back to Main Page", command=self.back_to_main)
         button_back.pack()
 
+    def import_csv(self):
+        file_path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+        if file_path:
+            df = pd.read_csv(file_path)
+            os.environ["VARIABLE_NAME"] = df
+    
     def back_to_main(self):
         # Destroy Window 2 and show the main page
         self.destroy()
@@ -166,20 +177,15 @@ class Window2(tk.Frame):
     def show_values(self):
         # Retrieve the entered values
         number_ext = self.number_ext.get()
+        os.environ["VARIABLE_NAME"] = number_ext
         number_inj = self.number_inj.get()
-        parambig = self.parambig.get()
-        paramsmall1 = self.paramsmall1.get()
-        paramsmall2 = self.paramsmall2.get()
-
-        # Set the minimum size for Window 2
-        self.master.minsize(500, 300)
-
-        # Print the entered values
-        print("Number_ext:", number_ext)
-        print("Number_inj:", number_inj)
-        print("Big labels:", parambig)
-        print("extraction labels:", paramsmall1)
-        print("injection labels:", paramsmall2)
+        os.environ["VARIABLE_NAME"] = number_inj
+        parambig2 = self.parambig.get()
+        os.environ["VARIABLE_NAME"] = parambig2
+        paramsmall12 = self.paramsmall1.get()
+        os.environ["VARIABLE_NAME"] = paramsmall12
+        paramsmall22 = self.paramsmall2.get()
+        os.environ["VARIABLE_NAME"] = paramsmall22
 
 # Create the main window
 window = tk.Tk()
