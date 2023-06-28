@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import filedialog
-import pandas as pd
 import os
 
 class MainPage(tk.Frame):
@@ -95,20 +94,13 @@ class Window1(tk.Frame):
 
     def show_values(self):
         # Retrieve the entered values
-        username = self.username.get()
-        os.environ["username"] = username
-        password = self.password.get()
-        os.environ["password"] = password
-        number = self.number.get()
-        os.environ["number"] = number
-        location = self.location.get()
-        os.environ["location"] = location
-        parambig1 = self.parambig.get()
-        os.environ["parambig1"] = parambig1
-        paramsmall11 = self.paramsmall1.get()
-        os.environ["paramsmall11"] = paramsmall11
-        paramsmall21 = self.paramsmall2.get()
-        os.environ["paramsmall12"] = paramsmall21
+        os.environ['username'] = self.username.get()
+        os.environ['password'] = self.password.get()
+        os.environ['number'] = str(self.number.get())
+        os.environ['location'] = self.location.get()
+        os.environ['parambig1'] = str(self.parambig.get())
+        os.environ['paramsmall11'] = str(self.paramsmall1.get())
+        os.environ['paramsmall21'] = str(self.paramsmall2.get())
 
 
 
@@ -164,10 +156,7 @@ class Window2(tk.Frame):
         button_back.pack()
 
     def import_csv(self):
-        file_path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
-        if file_path:
-            df = pd.read_csv(file_path)
-            os.environ["VARIABLE_NAME"] = df
+        os.environ['file_path'] = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
     
     def back_to_main(self):
         # Destroy Window 2 and show the main page
@@ -176,16 +165,11 @@ class Window2(tk.Frame):
 
     def show_values(self):
         # Retrieve the entered values
-        number_ext = self.number_ext.get()
-        os.environ["VARIABLE_NAME"] = number_ext
-        number_inj = self.number_inj.get()
-        os.environ["VARIABLE_NAME"] = number_inj
-        parambig2 = self.parambig.get()
-        os.environ["VARIABLE_NAME"] = parambig2
-        paramsmall12 = self.paramsmall1.get()
-        os.environ["VARIABLE_NAME"] = paramsmall12
-        paramsmall22 = self.paramsmall2.get()
-        os.environ["VARIABLE_NAME"] = paramsmall22
+        os.environ['number_ext'] = str(self.number_ext.get())
+        os.environ['number_inj'] = str(self.number_inj.get())
+        os.environ['parambig2'] = str(self.parambig.get())
+        os.environ['paramsmall12'] = str(self.paramsmall1.get())
+        os.environ['paramsmall22'] = str(self.paramsmall2.get())
 
 # Create the main window
 window = tk.Tk()
