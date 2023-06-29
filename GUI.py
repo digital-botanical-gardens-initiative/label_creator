@@ -37,6 +37,7 @@ class Window1(tk.Frame):
         self.password = tk.StringVar()
         self.number = tk.IntVar()
         self.location = tk.StringVar()
+        self.storage = tk.StringVar()
         self.parambig = tk.IntVar(value=1)
         self.paramsmall1 = tk.IntVar(value=1)
         self.paramsmall2 = tk.IntVar(value=1)
@@ -62,12 +63,19 @@ class Window1(tk.Frame):
         number_entry = tk.Entry(self, textvariable=self.number)
         number_entry.pack()
 
-        #Where the labels will be used
-        location_label = tk.Label(self, text="Sampling location:")
+        #In which garden the samples will be used
+        location_label = tk.Label(self, text="Botanical garden where the labels will be used:")
         location_label.pack()
         locations = ["JBUF", "JBN", "EMI"]
         dropdown_location = tk.OptionMenu(self, self.location, *locations)
         dropdown_location.pack()
+
+        #Where the labels will be stored
+        storage_label = tk.Label(self, text="Storage location:")
+        storage_label.pack()
+        storages = ["Fribourg", "Neuchâtel"]
+        dropdown_storage = tk.OptionMenu(self, self.storage, *storages)
+        dropdown_storage.pack()
 
         #Choose big labels
         check_big = tk.Checkbutton(self, text="big labels (dbgi_123456)", variable=self.parambig)
@@ -98,6 +106,7 @@ class Window1(tk.Frame):
         os.environ['password'] = self.password.get()
         os.environ['number'] = str(self.number.get())
         os.environ['location'] = self.location.get()
+        os.environ['storage'] = self.storage.get()
         os.environ['parambig1'] = str(self.parambig.get())
         os.environ['paramsmall11'] = str(self.paramsmall1.get())
         os.environ['paramsmall21'] = str(self.paramsmall2.get())
