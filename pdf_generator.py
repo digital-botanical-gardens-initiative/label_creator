@@ -1,63 +1,81 @@
 import pandas as pd
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Spacer
-from reportlab.lib import colors
+from reportlab.pdfgen import canvas
 import qrcode
-from io import BytesIO
 
-# Generate the values (as shown in the previous example)
-start_value = 'dbgi_000001'
-n = 80  # 5 boxes horizontally * 16 boxes vertically = 80 boxes
-start_number = int(start_value.split('_')[1])
-values = ['dbgi_{:06d}'.format(start_number + i) for i in range(n)]
+# Assuming your DataFrame is stored in a variable called 'df'
+# And the column with the values is called 'value_column'
 
-# Write the values to a CSV file
-df = pd.DataFrame({'Column': values})
-df.to_csv('codes.csv', index=False)
+df = pd.read_csv("C:/Users/edoua/Desktop/manu.csv")
 
-# Generate the PDF with labels
-doc = SimpleDocTemplate("labels.pdf", pagesize=letter)
+values = df['dbgi_code'].tolist()
 
-# Create a list to store table data
-data = []
+# Splitting the values into groups of 80
+value_groups = [values[i:i + 80] for i in range(0, len(values), 80)]
 
-# Generate QR codes for each value and add them to the data list
-for value in values:
-    qr = qrcode.QRCode(version=1, box_size=10, border=4)
-    qr.add_data(value)
-    qr.make(fit=True)
-    qr_img = qr.make_image(fill_color="black", back_color="white")
-    qr_buffer = BytesIO()
-    qr_img.save(qr_buffer, format='PNG')
-    qr_image = Image(qr_buffer)
-    qr_image.drawHeight = 2.54 * cm  # 1 inch = 2.54 centimeters
-    qr_image.drawWidth = 2.54 * cm  # 1 inch = 2.54 centimeters
-    data.append([value, qr_image])
+# Set up the PDF canvas
+pdf = canvas.Canvas("output.pdf", pagesize=A4)
 
-# Set table style
-table_style = TableStyle([
-    ('BACKGROUND', (0, 0), (-1, -1), colors.grey),
-    ('TEXTCOLOR', (0, 0), (-1, -1), colors.whitesmoke),
-    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-    ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-    ('FONTSIZE', (0, 0), (-1, -1), 10),
-    ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
-    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-    ('BACKGROUND', (0, 0), (-1, -1), colors.beige),
-    ('GRID', (0, 0), (-1, -1), 1, colors.black),
-])
+# Set the font size and line height
+font_size = 12
+line_height = 1.2 * font_size
 
-# Calculate the number of boxes horizontally and vertically
-num_boxes_horizontal = 5
-num_boxes_vertical = 16
+# Set the dimensions of the labels in centimeters
+label_width_cm = 3.56 * cm
+label_height_cm = 1.69 * cm
 
-# Create table and apply style
-table_data = [data[i * num_boxes_horizontal:(i + 1) * num_boxes_horizontal] for i in range(num_boxes_vertical)]
-table = Table(table_data, colWidths=[3.81 * cm] * num_boxes_horizontal, rowHeights=[4.06 * cm] * num_boxes_vertical)  # 1.5 inches = 3.81 centimeters, 1.6 inches = 4.06 centimeters
-table.setStyle(table_style)
+# Set the spacing between labels
+x_spacing = label_width_cm + 0.1 * cm # Add 0.1 cm spacing between labels horizontally
+y_spacing = label_height_cm + 0.1 * cm # Add 0.1 cm spacing between labels vertically
 
-# Build the PDF
-elements = [table]
-doc.build(elements)
+# Set the initial position for drawing
+x_start = 0.5 * cm
+y_start = A4[1] - 0.5 * cm
+
+# Iterate over the value groups
+for group in value_groups:
+    # Calculate the number of rows and columns needed for this group
+    num_rows = (len(group) - 1) // 5 + 1
+    num_cols = min(len(group), 5)
+
+    # Calculate the total width and height needed for this group
+    total_width = num_cols * x_spacing
+    total_height = num_rows * y_spacing
+
+    # Calculate the starting position for this group
+    x = x_start + (A4[0] - total_width) / 2
+    y = y_start - total_height
+
+    # Iterate over the values in the group
+    for i, value in enumerate(group):
+        # Calculate the position for drawing the value and QR code
+        pos_x = x + (i % 5) * x_spacing
+        pos_y = y + (i // 5) * y_spacing
+
+        # Draw the label text
+        pdf.setFont("Helvetica", font_size)
+        pdf.drawString(pos_x + 0.2 * cm, pos_y + 1.3 * cm, value[:8])
+        pdf.setFont("Helvetica", font_size - 2)  # Reduce font size for the second line
+        pdf.drawString(pos_x + 0.2 * cm, pos_y + 0.8 * cm, value[8:])
+
+        # Draw the QR code
+        qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
+        qr.add_data(value)
+        qr.make(fit=True)
+        qr_img = qr.make_image(fill_color="black", back_color="white")
+
+        # Calculate the position for drawing the QR code
+        qr_pos_x = pos_x + 0.7 * cm
+        qr_pos_y = pos_y + 0.3 * cm
+
+        # Draw the QR code
+        qr_img_path = "qr_code.png"
+        qr_img.save(qr_img_path)
+        pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=1.5 * cm, height=1.5 * cm)
+
+    # Move to the next page
+    pdf.showPage()
+
+# Save and close the PDF file
+pdf.save()
