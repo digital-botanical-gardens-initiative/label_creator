@@ -6,7 +6,6 @@ import qrcode
 
 # Assuming your DataFrame is stored in a variable called 'df'
 # And the column with the values is called 'value_column'
-
 df = pd.read_csv("C:/Users/edoua/Desktop/manu.csv")
 
 values = df['dbgi_code'].tolist()
@@ -26,12 +25,12 @@ label_width_cm = 3.56 * cm
 label_height_cm = 1.69 * cm
 
 # Set the spacing between labels
-x_spacing = label_width_cm + 0.1 * cm # Add 0.1 cm spacing between labels horizontally
-y_spacing = label_height_cm + 0.1 * cm # Add 0.1 cm spacing between labels vertically
+x_spacing = label_width_cm + 0.3 * cm  # Add 0.1 cm spacing between labels horizontally
+y_spacing = label_height_cm + 0 * cm # Add 0.1 cm spacing between labels vertically
 
 # Set the initial position for drawing
-x_start = 0.5 * cm
-y_start = A4[1] - 0.5 * cm
+x_start = 0.3 * cm
+y_start = A4[1] - 2 * cm
 
 # Iterate over the value groups
 for group in value_groups:
@@ -55,9 +54,9 @@ for group in value_groups:
 
         # Draw the label text
         pdf.setFont("Helvetica", font_size)
-        pdf.drawString(pos_x + 0.2 * cm, pos_y + 1.3 * cm, value[:8])
-        pdf.setFont("Helvetica", font_size - 2)  # Reduce font size for the second line
-        pdf.drawString(pos_x + 0.2 * cm, pos_y + 0.8 * cm, value[8:])
+        pdf.drawString(pos_x + 0.2 * cm, pos_y + 1.3 * cm, value[:4])
+        pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
+        pdf.drawString(pos_x + 0.2 * cm, pos_y + 0.8 * cm, value[4:])
 
         # Draw the QR code
         qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
@@ -66,16 +65,17 @@ for group in value_groups:
         qr_img = qr.make_image(fill_color="black", back_color="white")
 
         # Calculate the position for drawing the QR code
-        qr_pos_x = pos_x + 0.7 * cm
-        qr_pos_y = pos_y + 0.3 * cm
+        qr_pos_x = pos_x + 2.3 * cm
+        qr_pos_y = pos_y + 0.9 * cm
 
         # Draw the QR code
         qr_img_path = "qr_code.png"
         qr_img.save(qr_img_path)
-        pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=1.5 * cm, height=1.5 * cm)
+        pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=1.3 * cm, height=1.3 * cm)
 
     # Move to the next page
     pdf.showPage()
 
 # Save and close the PDF file
 pdf.save()
+
