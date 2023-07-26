@@ -72,74 +72,226 @@ if username and password and location and storage and number != 0:
 
     values = df['dbgi_codes'].tolist()
 
-    # Splitting the values into groups of 80
-    value_groups = [values[i:i + 80] for i in range(0, len(values), 80)]
+    if parambig1 == '1':
 
-    # Set up the PDF canvas
-    pdf = canvas.Canvas("big_labels_generated.pdf", pagesize=A4)
+        # Splitting the values into groups of 80
+        value_groups = [values[i:i + 80] for i in range(0, len(values), 80)]
 
-    # Set the font size and line height
-    font_size = 12
-    line_height = 1.2 * font_size
+        # Set up the PDF canvas
+        pdf = canvas.Canvas("big_labels_generated.pdf", pagesize=A4)
 
-    # Set the dimensions of the labels in centimeters
-    label_width_cm = 3.56 * cm
-    label_height_cm = 1.69 * cm
+        # Set the font size and line height
+        font_size = 12
+        line_height = 1.2 * font_size
 
-    # Set the spacing between labels
-    x_spacing = label_width_cm + 0.27 * cm
-    y_spacing = label_height_cm
+        # Set the dimensions of the labels in centimeters
+        label_width_cm = 3.56 * cm
+        label_height_cm = 1.69 * cm
 
-    # Set the initial position for drawing
-    x_start = 0.2  * cm
-    y_start = A4[1] - 1.33 * cm
+        # Set the spacing between labels
+        x_spacing = label_width_cm + 0.27 * cm
+        y_spacing = label_height_cm
 
-    # Iterate over the value groups
-    for group in value_groups:
-        # Calculate the number of rows and columns needed for this group
-        num_rows = (len(group) - 1) // 5 + 1
-        num_cols = min(len(group), 5)
+        # Set the initial position for drawing
+        x_start = 0.2  * cm
+        y_start = A4[1] - 1.33 * cm
 
-        # Calculate the total width and height needed for this group
-        total_width = num_cols * x_spacing
-        total_height = num_rows * y_spacing
+        # Iterate over the value groups
+        for group in value_groups:
+            # Calculate the number of rows and columns needed for this group
+            num_rows = (len(group) - 1) // 5 + 1
+            num_cols = min(len(group), 5)
 
-        # Calculate the starting position for this group
-        x = x_start + (A4[0] - total_width) / 2
-        y = y_start - total_height
+            # Calculate the total width and height needed for this group
+            total_width = num_cols * x_spacing
+            total_height = num_rows * y_spacing
 
-        # Iterate over the values in the group
-        for i, value in enumerate(group):
-            # Calculate the position for drawing the value and QR code
-            pos_x = x + (i % 5) * x_spacing
-            pos_y = y + (i // 5) * y_spacing
+            # Calculate the starting position for this group
+            x = x_start + (A4[0] - total_width) / 2
+            y = y_start - total_height
 
-            # Draw the label text
-            pdf.setFont("Helvetica", font_size)
-            pdf.drawString(pos_x + 0.55 * cm, pos_y + 0.9 * cm, value[:5])
-            pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
-            pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.4 * cm, value[5:])
+            # Iterate over the values in the group
+            for i, value in enumerate(group):
+                # Calculate the position for drawing the value and QR code
+                pos_x = x + (i % 5) * x_spacing
+                pos_y = y + (i // 5) * y_spacing
 
-            # Draw the QR code
-            qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=13.5, border=0 )
-            qr.add_data(value)
-            qr.make(fit=True)
-            qr_img = qr.make_image(fill_color="black", back_color="white")
+                # Draw the label text
+                pdf.setFont("Helvetica", font_size)
+                pdf.drawString(pos_x + 0.55 * cm, pos_y + 0.9 * cm, value[:5])
+                pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
+                pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.4 * cm, value[5:])
 
-            # Calculate the position for drawing the QR code
-            qr_pos_x = pos_x + 1.9 * cm
-            qr_pos_y = pos_y + 0.2 * cm
+                # Draw the QR code
+                qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=13.5, border=0 )
+                qr.add_data(value)
+                qr.make(fit=True)
+                qr_img = qr.make_image(fill_color="black", back_color="white")
 
-            # Draw the QR code
-            qr_img_path = "qr_code.png"
-            qr_img.save(qr_img_path)
-            pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=1.35 * cm, height=1.35 * cm)
+                # Calculate the position for drawing the QR code
+                qr_pos_x = pos_x + 1.9 * cm
+                qr_pos_y = pos_y + 0.2 * cm
 
-        # Move to the next page
-        pdf.showPage()
+                # Draw the QR code
+                qr_img_path = "qr_code.png"
+                qr_img.save(qr_img_path)
+                pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=1.35 * cm, height=1.35 * cm)
 
-    # Save and close the PDF file
-    pdf.save()
+            # Move to the next page
+            pdf.showPage()
+
+        # Save and close the PDF file
+        pdf.save()
+    
+    if paramsmall11 == '1':
+
+        values = [item + '_01' for item in values]
+        print(values)
+
+        # Splitting the values into groups of 80
+        value_groups = [values[i:i + 189] for i in range(0, len(values), 189)]
+
+        # Set up the PDF canvas
+        pdf = canvas.Canvas("extraction_labels_generated.pdf", pagesize=A4)
+
+        # Set the font size and line height
+        font_size = 8
+        line_height = 1.2 * font_size
+
+        # Set the dimensions of the labels in centimeters
+        label_width_cm = 2.54 * cm
+        label_height_cm = 1 * cm
+
+        # Set the spacing between labels
+        x_spacing = label_width_cm + 0.3 * cm
+        y_spacing = label_height_cm
+
+        # Set the initial position for drawing
+        x_start = 0.1  * cm
+        y_start = A4[1] - 1.33 * cm
+
+        # Iterate over the value groups
+        for group in value_groups:
+            # Calculate the number of rows and columns needed for this group
+            num_rows = (len(group) - 1) // 7 + 1
+            num_cols = min(len(group), 7)
+
+            # Calculate the total width and height needed for this group
+            total_width = num_cols * x_spacing
+            total_height = num_rows * y_spacing
+
+            # Calculate the starting position for this group
+            x = x_start + (A4[0] - total_width) / 2
+            y = y_start - total_height
+
+            # Iterate over the values in the group
+            for i, value in enumerate(group):
+                # Calculate the position for drawing the value and QR code
+                pos_x = x + (i % 7) * x_spacing
+                pos_y = y + (i // 7) * y_spacing
+
+                # Draw the label text
+                pdf.setFont("Helvetica", font_size)
+                pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.85 * cm, value[:5])
+                #pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
+                pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.5 * cm, value[5:11])
+                pdf.drawString(pos_x + 0.55 * cm, pos_y + 0.2 * cm, value[11:])
+
+                # Draw the QR code
+                qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
+                qr.add_data(value)
+                qr.make(fit=True)
+                qr_img = qr.make_image(fill_color="black", back_color="white")
+
+                # Calculate the position for drawing the QR code
+                qr_pos_x = pos_x + 1.45 * cm
+                qr_pos_y = pos_y + 0.3 * cm
+
+                # Draw the QR code
+                qr_img_path = "qr_code.png"
+                qr_img.save(qr_img_path)
+                pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=0.8 * cm, height=0.8 * cm)
+
+            # Move to the next page
+            pdf.showPage()
+
+        # Save and close the PDF file
+        pdf.save()
+    
+    if paramsmall21 == '1':
+
+        values = [item + '_01' for item in values]
+        print(values)
+
+        # Splitting the values into groups of 80
+        value_groups = [values[i:i + 189] for i in range(0, len(values), 189)]
+
+        # Set up the PDF canvas
+        pdf = canvas.Canvas("injection_labels_generated.pdf", pagesize=A4)
+
+        # Set the font size and line height
+        font_size = 8
+        line_height = 1.2 * font_size
+
+        # Set the dimensions of the labels in centimeters
+        label_width_cm = 2.54 * cm
+        label_height_cm = 1 * cm
+
+        # Set the spacing between labels
+        x_spacing = label_width_cm + 0.3 * cm
+        y_spacing = label_height_cm
+
+        # Set the initial position for drawing
+        x_start = 0.1  * cm
+        y_start = A4[1] - 1.33 * cm
+
+        # Iterate over the value groups
+        for group in value_groups:
+            # Calculate the number of rows and columns needed for this group
+            num_rows = (len(group) - 1) // 7 + 1
+            num_cols = min(len(group), 7)
+
+            # Calculate the total width and height needed for this group
+            total_width = num_cols * x_spacing
+            total_height = num_rows * y_spacing
+
+            # Calculate the starting position for this group
+            x = x_start + (A4[0] - total_width) / 2
+            y = y_start - total_height
+
+            # Iterate over the values in the group
+            for i, value in enumerate(group):
+                # Calculate the position for drawing the value and QR code
+                pos_x = x + (i % 7) * x_spacing
+                pos_y = y + (i // 7) * y_spacing
+
+                # Draw the label text
+                pdf.setFont("Helvetica", font_size)
+                pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.85 * cm, value[:5])
+                #pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
+                pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.5 * cm, value[5:11])
+                pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.2 * cm, value[11:])
+
+                # Draw the QR code
+                qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
+                qr.add_data(value)
+                qr.make(fit=True)
+                qr_img = qr.make_image(fill_color="black", back_color="white")
+
+                # Calculate the position for drawing the QR code
+                qr_pos_x = pos_x + 1.45 * cm
+                qr_pos_y = pos_y + 0.3 * cm
+
+                # Draw the QR code
+                qr_img_path = "qr_code.png"
+                qr_img.save(qr_img_path)
+                pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=0.8 * cm, height=0.8 * cm)
+
+            # Move to the next page
+            pdf.showPage()
+
+        # Save and close the PDF file
+        pdf.save()
 
 else:
     print("Username and/or password not set. The script will be ignored.")
