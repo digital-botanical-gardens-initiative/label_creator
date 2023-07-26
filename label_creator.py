@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import filedialog
 import os
-import subprocess
 import Processing_existing
 import Processing_new
+import base64
 
 class MainPage(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -122,7 +122,7 @@ class Window1(tk.Frame):
         os.environ['paramsmall11'] = str(self.paramsmall1.get())
         os.environ['paramsmall21'] = str(self.paramsmall2.get())
         self.master.destroy()
-        Processing_new.main
+        Processing_new.main()
         #subprocess.run(["python", "Processing_new.py"])
 
 
@@ -202,14 +202,18 @@ class Window2(tk.Frame):
         os.environ['paramsmall12'] = str(self.paramsmall1.get())
         os.environ['paramsmall22'] = str(self.paramsmall2.get())
         self.master.destroy()
-        Processing_existing.main
+        Processing_existing.main()
         #subprocess.run(["python", "Processing_existing.py"])
 
 # Create the main window
 window = tk.Tk()
 window.title("DBGI labels creator")
 window.minsize(500, 300)
-window.iconbitmap("./icon.ico")
+
+#with open("./icon.ico", "rb") as icon_file:
+#    icon_data = icon_file.read()
+#    icon_base64 = base64.b64encode(icon_data).decode()
+#window.iconbitmap("data:image/x-icon;base64" + icon_base64)
 
 # Create the main page
 main_page = MainPage(window)
