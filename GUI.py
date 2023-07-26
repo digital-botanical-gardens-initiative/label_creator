@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import filedialog
 import os
 import subprocess
+import Processing_existing
+import Processing_new
 
 class MainPage(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -120,7 +122,8 @@ class Window1(tk.Frame):
         os.environ['paramsmall11'] = str(self.paramsmall1.get())
         os.environ['paramsmall21'] = str(self.paramsmall2.get())
         self.master.destroy()
-        subprocess.run(["python", "Processing_new.py"])
+        Processing_new.main
+        #subprocess.run(["python", "Processing_new.py"])
 
 
 
@@ -199,7 +202,8 @@ class Window2(tk.Frame):
         os.environ['paramsmall12'] = str(self.paramsmall1.get())
         os.environ['paramsmall22'] = str(self.paramsmall2.get())
         self.master.destroy()
-        subprocess.run(["python", "Processing_existing.py"])
+        Processing_existing.main
+        #subprocess.run(["python", "Processing_existing.py"])
 
 # Create the main window
 window = tk.Tk()
