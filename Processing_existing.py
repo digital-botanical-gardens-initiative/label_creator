@@ -8,11 +8,13 @@ import qrcode
 #Variables of the second window (from existing)
 number_ext = os.environ.get("number_ext")
 number_inj = os.environ.get("number_inj")
-parambig2 = os.environ.get("parambig2")
-paramsmall12 = os.environ.get("paramsmall12")
-paramsmall22 = os.environ.get("paramsmall22")
 file_path = os.environ.get("file_path")
-if file_path:
+output_folder = os.environ.get("output_folder")
+
+if file_path and output_folder and number_ext and number_inj:
+    parambig2 = os.environ.get("parambig2")
+    paramsmall12 = os.environ.get("paramsmall12")
+    paramsmall22 = os.environ.get("paramsmall22")
     df = pd.read_csv(file_path, header=None)
 
     values = df[0].tolist()
@@ -23,7 +25,8 @@ if file_path:
         value_groups = [values[i:i + 80] for i in range(0, len(values), 80)]
 
         # Set up the PDF canvas
-        pdf = canvas.Canvas("big_labels_existing.pdf", pagesize=A4)
+        pdf_path = output_folder + "/big_labels_existing.pdf"
+        pdf = canvas.Canvas(pdf_path, pagesize=A4)
 
         # Set the font size and line height
         font_size = 12
@@ -97,7 +100,8 @@ if file_path:
         value_groups = [values[i:i + 189] for i in range(0, len(values), 189)]
 
         # Set up the PDF canvas
-        pdf = canvas.Canvas("extraction_labels_existing.pdf", pagesize=A4)
+        pdf_path = output_folder + "/extraction_labels_existing.pdf"
+        pdf = canvas.Canvas(pdf_path, pagesize=A4)
 
         # Set the font size and line height
         font_size = 8
@@ -174,7 +178,8 @@ if file_path:
         value_groups = [values[i:i + 189] for i in range(0, len(values), 189)]
 
         # Set up the PDF canvas
-        pdf = canvas.Canvas("injection_labels_existing.pdf", pagesize=A4)
+        pdf_path = output_folder + "/injection_labels_existing.pdf"
+        pdf = canvas.Canvas(pdf_path, pagesize=A4)
 
         # Set the font size and line height
         font_size = 8

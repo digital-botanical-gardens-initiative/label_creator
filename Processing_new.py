@@ -12,9 +12,10 @@ password = os.environ.get("password")
 location = os.environ.get("location")
 storage = os.environ.get("storage")
 number = int(os.environ.get("number"))
+output_folder = os.environ.get("output_folder")
 
 # Check if username and password are set (not empty)
-if username and password and location and storage and number != 0:
+if username and password and location and storage and number != 0 and output_folder:
     parambig1 = os.environ.get("parambig1")
     paramsmall11 = os.environ.get("paramsmall11")
     paramsmall21 = os.environ.get("paramsmall21")
@@ -56,29 +57,30 @@ if username and password and location and storage and number != 0:
     data = response.json()['data']
     access_token = data['access_token']
     refresh_token = data['refresh_token']
+
+    #Extract the last entry in the DBGI_SPL_ID column of the samples collection
     DBGI_SPL_ID = 'DBGI_SPL_ID'
     params = {'sort[]': f'-{DBGI_SPL_ID}'}
     collection_url = base_url + '/items/samples'
     response = session.get(collection_url, params=params)
     last_value = response.json()['data'][0][DBGI_SPL_ID]
-
     last_number = int(last_value.split('_')[1])
+
+    #Define the first number of the list (last number + 1)
     first_number = last_number + 1
 
+    #Create a list with the asked codes beginning with the first number
     values = ['dbgi_{:06d}'.format(first_number + i) for i in range(number)]
 
-    # Write the values to a dataframe
-    df = pd.DataFrame({'dbgi_codes': values})
-
-    values = df['dbgi_codes'].tolist()
-
+    #Check if big labels are asked to generate the pdf
     if parambig1 == '1':
 
-        # Splitting the values into groups of 80
+        # Splitting the values into groups of 80 (number of labels per page)
         value_groups = [values[i:i + 80] for i in range(0, len(values), 80)]
 
         # Set up the PDF canvas
-        pdf = canvas.Canvas("big_labels_generated.pdf", pagesize=A4)
+        pdf_path = output_folder + "/big_labels_generated.pdf"
+        pdf = canvas.Canvas(pdf_path, pagesize=A4)
 
         # Set the font size and line height
         font_size = 12
@@ -122,7 +124,7 @@ if username and password and location and storage and number != 0:
                 pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
                 pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.4 * cm, value[5:])
 
-                # Draw the QR code
+                # Create the QR code
                 qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=13.5, border=0 )
                 qr.add_data(value)
                 qr.make(fit=True)
@@ -140,11 +142,13 @@ if username and password and location and storage and number != 0:
             # Move to the next page
             pdf.showPage()
 
-        # Save and close the PDF file
+        # Save the PDF file
         pdf.save()
-    
+
+    #Check if extraction labels are asked to generate the pdf
     if paramsmall11 == '1':
 
+        #Add the extraction suffix
         values = [item + '_01' for item in values]
         print(values)
 
@@ -152,7 +156,8 @@ if username and password and location and storage and number != 0:
         value_groups = [values[i:i + 189] for i in range(0, len(values), 189)]
 
         # Set up the PDF canvas
-        pdf = canvas.Canvas("extraction_labels_generated.pdf", pagesize=A4)
+        pdf_path = output_folder + "/extraction_labels_generated.pdf"
+        pdf = canvas.Canvas(pdf_path, pagesize=A4)
 
         # Set the font size and line height
         font_size = 8
@@ -197,7 +202,7 @@ if username and password and location and storage and number != 0:
                 pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.5 * cm, value[5:11])
                 pdf.drawString(pos_x + 0.55 * cm, pos_y + 0.2 * cm, value[11:])
 
-                # Draw the QR code
+                # Create the QR code
                 qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
                 qr.add_data(value)
                 qr.make(fit=True)
@@ -218,8 +223,10 @@ if username and password and location and storage and number != 0:
         # Save and close the PDF file
         pdf.save()
     
+    #Check if injection labels are asked to generate the pdf
     if paramsmall21 == '1':
 
+        #Add the injection suffix
         values = [item + '_01' for item in values]
         print(values)
 
@@ -227,7 +234,8 @@ if username and password and location and storage and number != 0:
         value_groups = [values[i:i + 189] for i in range(0, len(values), 189)]
 
         # Set up the PDF canvas
-        pdf = canvas.Canvas("injection_labels_generated.pdf", pagesize=A4)
+        pdf_path = output_folder + "/injection_labels_generated.pdf"
+        pdf = canvas.Canvas(pdf_path, pagesize=A4)
 
         # Set the font size and line height
         font_size = 8
@@ -272,7 +280,7 @@ if username and password and location and storage and number != 0:
                 pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.5 * cm, value[5:11])
                 pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.2 * cm, value[11:])
 
-                # Draw the QR code
+                # Create the QR code
                 qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
                 qr.add_data(value)
                 qr.make(fit=True)

@@ -77,6 +77,11 @@ class Window1(tk.Frame):
         dropdown_storage = tk.OptionMenu(self, self.storage, *storages)
         dropdown_storage.pack()
 
+        output_label = tk.Label(self, text="Select the output path for the pdf files")
+        output_label.pack()
+        output_button = tk.Button(self, text="select path", command=self.output_folder)
+        output_button.pack()
+
         #Choose big labels
         check_big = tk.Checkbutton(self, text="big labels (dbgi_123456)", variable=self.parambig)
         check_big.pack()
@@ -100,6 +105,9 @@ class Window1(tk.Frame):
         self.destroy()
         main_page.pack()
 
+    def output_folder(self):
+        os.environ['output_folder'] = filedialog.askdirectory()
+
     def show_values(self):
         # Retrieve the entered values
         os.environ['username'] = self.username.get()
@@ -110,6 +118,7 @@ class Window1(tk.Frame):
         os.environ['parambig1'] = str(self.parambig.get())
         os.environ['paramsmall11'] = str(self.paramsmall1.get())
         os.environ['paramsmall21'] = str(self.paramsmall2.get())
+        self.master.destroy()
 
 
 
@@ -146,6 +155,11 @@ class Window2(tk.Frame):
         dropdown_number_inj = tk.OptionMenu(self, self.number_inj, *numbers_inj)
         dropdown_number_inj.pack()
 
+        output_label = tk.Label(self, text="Select the output path for the pdf files")
+        output_label.pack()
+        output_button = tk.Button(self, text="select path", command=self.output_folder)
+        output_button.pack()
+
         #Choose big labels
         check_big = tk.Checkbutton(self, text="big labels (dbgi_123456)", variable=self.parambig)
         check_big.pack()
@@ -166,6 +180,9 @@ class Window2(tk.Frame):
 
     def import_csv(self):
         os.environ['file_path'] = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+
+    def output_folder(self):
+        os.environ['output_folder'] = filedialog.askdirectory()
     
     def back_to_main(self):
         # Destroy Window 2 and show the main page
@@ -179,6 +196,7 @@ class Window2(tk.Frame):
         os.environ['parambig2'] = str(self.parambig.get())
         os.environ['paramsmall12'] = str(self.paramsmall1.get())
         os.environ['paramsmall22'] = str(self.paramsmall2.get())
+        self.master.destroy()
 
 # Create the main window
 window = tk.Tk()
