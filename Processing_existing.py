@@ -32,7 +32,6 @@ def main():
 
             # Set the font size and line height
             font_size = 12
-            line_height = 1.2 * font_size
 
             # Set the dimensions of the labels in centimeters
             label_width_cm = 3.56 * cm
@@ -106,19 +105,18 @@ def main():
 
             # Set the font size and line height
             font_size = 8
-            line_height = 1.2 * font_size
 
             # Set the dimensions of the labels in centimeters
             label_width_cm = 2.54 * cm
             label_height_cm = 1 * cm
 
             # Set the spacing between labels
-            x_spacing = label_width_cm + 0.3 * cm
+            x_spacing = label_width_cm + 0.25 * cm
             y_spacing = label_height_cm
 
             # Set the initial position for drawing
             x_start = 0.1  * cm
-            y_start = A4[1] - 1.33 * cm
+            y_start = A4[1] - 1.48 * cm
 
             # Iterate over the value groups
             for group in value_groups:
@@ -142,10 +140,10 @@ def main():
 
                     # Draw the label text
                     pdf.setFont("Helvetica", font_size)
-                    pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.85 * cm, value[:5])
+                    pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.9 * cm, value[:5])
                     #pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
-                    pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.5 * cm, value[5:11])
-                    pdf.drawString(pos_x + 0.55 * cm, pos_y + 0.2 * cm, value[11:])
+                    pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.55 * cm, value[5:11])
+                    pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.25 * cm, value[11:])
 
                     # Draw the QR code
                     qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
@@ -154,7 +152,7 @@ def main():
                     qr_img = qr.make_image(fill_color="black", back_color="white")
 
                     # Calculate the position for drawing the QR code
-                    qr_pos_x = pos_x + 1.45 * cm
+                    qr_pos_x = pos_x + 1.5 * cm
                     qr_pos_y = pos_y + 0.3 * cm
 
                     # Draw the QR code
@@ -173,7 +171,6 @@ def main():
             values = df[0].tolist()
 
             values = [item + '_' + number_ext + '_' + number_inj for item in values]
-            print(values)
 
             # Splitting the values into groups of 80
             value_groups = [values[i:i + 189] for i in range(0, len(values), 189)]
@@ -184,19 +181,18 @@ def main():
 
             # Set the font size and line height
             font_size = 8
-            line_height = 1.2 * font_size
 
             # Set the dimensions of the labels in centimeters
             label_width_cm = 2.54 * cm
             label_height_cm = 1 * cm
 
             # Set the spacing between labels
-            x_spacing = label_width_cm + 0.3 * cm
+            x_spacing = label_width_cm + 0.25 * cm
             y_spacing = label_height_cm
 
             # Set the initial position for drawing
             x_start = 0.1  * cm
-            y_start = A4[1] - 1.33 * cm
+            y_start = A4[1] - 1.48 * cm
 
             # Iterate over the value groups
             for group in value_groups:
@@ -220,10 +216,10 @@ def main():
 
                     # Draw the label text
                     pdf.setFont("Helvetica", font_size)
-                    pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.85 * cm, value[:5])
+                    pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.9 * cm, value[:5])
                     #pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
-                    pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.5 * cm, value[5:11])
-                    pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.2 * cm, value[11:])
+                    pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.55 * cm, value[5:11])
+                    pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.25 * cm, value[11:])
 
                     # Draw the QR code
                     qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
@@ -232,7 +228,7 @@ def main():
                     qr_img = qr.make_image(fill_color="black", back_color="white")
 
                     # Calculate the position for drawing the QR code
-                    qr_pos_x = pos_x + 1.45 * cm
+                    qr_pos_x = pos_x + 1.5 * cm
                     qr_pos_y = pos_y + 0.3 * cm
 
                     # Draw the QR code

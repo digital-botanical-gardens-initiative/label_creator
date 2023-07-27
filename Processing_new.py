@@ -22,6 +22,27 @@ def main():
         paramsmall11 = os.environ.get("paramsmall11")
         paramsmall21 = os.environ.get("paramsmall21")
 
+        # Define the Directus base URL
+        base_url = 'http://directus.dbgi.org'
+
+        # Define the login endpoint URL
+        login_url = base_url + '/auth/login'
+        # Create a session object for making requests
+        session = requests.Session()
+        # Send a POST request to the login endpoint
+        response = session.post(login_url, json={'email': username, 'password': password})
+        data = response.json()['data']
+        access_token = data['access_token']
+        refresh_token = data['refresh_token']
+
+        #Extract the last entry in the DBGI_SPL_ID column of the samples collection
+        DBGI_SPL_ID = 'DBGI_SPL_ID'
+        params = {'sort[]': f'-{DBGI_SPL_ID}'}
+        collection_url = base_url + '/items/samples'
+        response = session.get(collection_url, params=params)
+        last_value = response.json()['data'][0][DBGI_SPL_ID]
+        last_number = int(last_value.split('_')[1])
+
         # Create template dataframe to reserve labels
         row_data = {'DBGI_SPL_ID': '',
                     'Reserved': 'T',
@@ -46,33 +67,26 @@ def main():
                                         'date_created',
                                         'user_updated',
                                         'date_updated'])
-
-        # Define the Directus base URL
-        base_url = 'http://directus.dbgi.org'
-
-        # Define the login endpoint URL
-        login_url = base_url + '/auth/login'
-        # Create a session object for making requests
-        session = requests.Session()
-        # Send a POST request to the login endpoint
-        response = session.post(login_url, json={'email': username, 'password': password})
-        data = response.json()['data']
-        access_token = data['access_token']
-        refresh_token = data['refresh_token']
-
-        #Extract the last entry in the DBGI_SPL_ID column of the samples collection
-        DBGI_SPL_ID = 'DBGI_SPL_ID'
-        params = {'sort[]': f'-{DBGI_SPL_ID}'}
-        collection_url = base_url + '/items/samples'
-        response = session.get(collection_url, params=params)
-        last_value = response.json()['data'][0][DBGI_SPL_ID]
-        last_number = int(last_value.split('_')[1])
-
+        
         #Define the first number of the list (last number + 1)
         first_number = last_number + 1
-
+        
         #Create a list with the asked codes beginning with the first number
         values = ['dbgi_{:06d}'.format(first_number + i) for i in range(number)]
+        
+        records = template.to_dict(orient="records")
+
+        for i in range(len(records)):
+            records[i]['DBGI_SPL_ID'] = 'dbgi_000000'
+
+        print(records)
+
+        #Add the codes to the database
+        session.headers.update({'Authorization': f'Bearer {access_token}'})
+        response = session.post(collection_url, json=records)
+        print(response.json())
+
+        
 
         #Check if big labels are asked to generate the pdf
         if parambig1 == '1':
@@ -86,7 +100,6 @@ def main():
 
             # Set the font size and line height
             font_size = 12
-            line_height = 1.2 * font_size
 
             # Set the dimensions of the labels in centimeters
             label_width_cm = 3.56 * cm
@@ -126,7 +139,7 @@ def main():
                     pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
                     pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.4 * cm, value[5:])
 
-                    # Create the QR code
+                    # Draw the QR code
                     qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=13.5, border=0 )
                     qr.add_data(value)
                     qr.make(fit=True)
@@ -144,7 +157,7 @@ def main():
                 # Move to the next page
                 pdf.showPage()
 
-            # Save the PDF file
+            # Save and close the PDF file
             pdf.save()
 
         #Check if extraction labels are asked to generate the pdf
@@ -152,7 +165,6 @@ def main():
 
             #Add the extraction suffix
             values = [item + '_01' for item in values]
-            print(values)
 
             # Splitting the values into groups of 80
             value_groups = [values[i:i + 189] for i in range(0, len(values), 189)]
@@ -163,19 +175,18 @@ def main():
 
             # Set the font size and line height
             font_size = 8
-            line_height = 1.2 * font_size
 
             # Set the dimensions of the labels in centimeters
             label_width_cm = 2.54 * cm
             label_height_cm = 1 * cm
 
             # Set the spacing between labels
-            x_spacing = label_width_cm + 0.3 * cm
+            x_spacing = label_width_cm + 0.25 * cm
             y_spacing = label_height_cm
 
             # Set the initial position for drawing
             x_start = 0.1  * cm
-            y_start = A4[1] - 1.33 * cm
+            y_start = A4[1] - 1.48 * cm
 
             # Iterate over the value groups
             for group in value_groups:
@@ -199,19 +210,19 @@ def main():
 
                     # Draw the label text
                     pdf.setFont("Helvetica", font_size)
-                    pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.85 * cm, value[:5])
+                    pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.9 * cm, value[:5])
                     #pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
-                    pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.5 * cm, value[5:11])
-                    pdf.drawString(pos_x + 0.55 * cm, pos_y + 0.2 * cm, value[11:])
+                    pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.55 * cm, value[5:11])
+                    pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.25 * cm, value[11:])
 
-                    # Create the QR code
+                    # Draw the QR code
                     qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
                     qr.add_data(value)
                     qr.make(fit=True)
                     qr_img = qr.make_image(fill_color="black", back_color="white")
 
                     # Calculate the position for drawing the QR code
-                    qr_pos_x = pos_x + 1.45 * cm
+                    qr_pos_x = pos_x + 1.5 * cm
                     qr_pos_y = pos_y + 0.3 * cm
 
                     # Draw the QR code
@@ -230,7 +241,6 @@ def main():
 
             #Add the injection suffix
             values = [item + '_01' for item in values]
-            print(values)
 
             # Splitting the values into groups of 80
             value_groups = [values[i:i + 189] for i in range(0, len(values), 189)]
@@ -241,19 +251,18 @@ def main():
 
             # Set the font size and line height
             font_size = 8
-            line_height = 1.2 * font_size
 
             # Set the dimensions of the labels in centimeters
             label_width_cm = 2.54 * cm
             label_height_cm = 1 * cm
 
             # Set the spacing between labels
-            x_spacing = label_width_cm + 0.3 * cm
+            x_spacing = label_width_cm + 0.25 * cm
             y_spacing = label_height_cm
 
             # Set the initial position for drawing
             x_start = 0.1  * cm
-            y_start = A4[1] - 1.33 * cm
+            y_start = A4[1] - 1.48 * cm
 
             # Iterate over the value groups
             for group in value_groups:
@@ -277,19 +286,19 @@ def main():
 
                     # Draw the label text
                     pdf.setFont("Helvetica", font_size)
-                    pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.85 * cm, value[:5])
+                    pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.9 * cm, value[:5])
                     #pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
-                    pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.5 * cm, value[5:11])
-                    pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.2 * cm, value[11:])
+                    pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.55 * cm, value[5:11])
+                    pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.25 * cm, value[11:])
 
-                    # Create the QR code
+                    # Draw the QR code
                     qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
                     qr.add_data(value)
                     qr.make(fit=True)
                     qr_img = qr.make_image(fill_color="black", back_color="white")
 
                     # Calculate the position for drawing the QR code
-                    qr_pos_x = pos_x + 1.45 * cm
+                    qr_pos_x = pos_x + 1.5 * cm
                     qr_pos_y = pos_y + 0.3 * cm
 
                     # Draw the QR code
@@ -305,6 +314,4 @@ def main():
 
     else:
         print("Username and/or password not set. The script will be ignored.")
-
-
     # Needs still to add the generated code on directus

@@ -3,7 +3,6 @@ from tkinter import filedialog
 import os
 import Processing_existing
 import Processing_new
-import base64
 
 class MainPage(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -208,12 +207,7 @@ class Window2(tk.Frame):
 # Create the main window
 window = tk.Tk()
 window.title("DBGI labels creator")
-window.minsize(500, 300)
-
-#with open("./icon.ico", "rb") as icon_file:
-#    icon_data = icon_file.read()
-#    icon_base64 = base64.b64encode(icon_data).decode()
-#window.iconbitmap("data:image/x-icon;base64" + icon_base64)
+window.minsize(600, 400)
 
 # Create the main page
 main_page = MainPage(window)
