@@ -44,29 +44,17 @@ def main():
         last_number = int(last_value.split('_')[1])
 
         # Create template dataframe to reserve labels
-        row_data = {'DBGI_SPL_ID': '',
-                    'Reserved': 'T',
+        row_data = {'Reserved': 'True',
                     'BG': location,
-                    'inaturalist_id': '',
-                    'Comment': '',
-                    'QR': '',
-                    'sample_location': storage,
-                    'user_created': '',
-                    'date_created': '',
-                    'user_updated': '',
-                    'date_updated': ''}
+                    'sample_location': storage}
         
-        template = pd.DataFrame([row_data for _ in range(number)], columns=['DBGI_SPL_ID',
-                                        'Reserved',
+        template = pd.DataFrame([row_data for _ in range(number)], columns=['Reserved',
                                         'BG',
-                                        'inaturalist_id',
-                                        'Comment',
-                                        'QR',
-                                        'sample_location',
-                                        'user_created',
-                                        'date_created',
-                                        'user_updated',
-                                        'date_updated'])
+                                        'sample_location'])
+
+        headers = {
+                    'Content-Type': 'application/json'
+        }
         
         #Define the first number of the list (last number + 1)
         first_number = last_number + 1
@@ -74,19 +62,13 @@ def main():
         #Create a list with the asked codes beginning with the first number
         values = ['dbgi_{:06d}'.format(first_number + i) for i in range(number)]
         
-        records = template.to_dict(orient="records")
-
-        for i in range(len(records)):
-            records[i]['DBGI_SPL_ID'] = 'dbgi_000000'
-
+        records = template.to_json(orient="records")
         print(records)
 
         #Add the codes to the database
         session.headers.update({'Authorization': f'Bearer {access_token}'})
-        response = session.post(collection_url, json=records)
+        response = session.post(url=collection_url, headers=headers, data=records)
         print(response.json())
-
-        
 
         #Check if big labels are asked to generate the pdf
         if parambig1 == '1':
