@@ -108,7 +108,7 @@ def main():
 
             # Set the dimensions of the labels in centimeters
             label_width_cm = 2.54 * cm
-            label_height_cm = 1 * cm
+            label_height_cm = 0.999 * cm
 
             # Set the spacing between labels
             x_spacing = label_width_cm + 0.25 * cm
@@ -116,7 +116,7 @@ def main():
 
             # Set the initial position for drawing
             x_start = 0.1  * cm
-            y_start = A4[1] - 1.48 * cm
+            y_start = A4[1] - 1.46 * cm
 
             # Iterate over the value groups
             for group in value_groups:
@@ -184,7 +184,7 @@ def main():
 
             # Set the dimensions of the labels in centimeters
             label_width_cm = 2.54 * cm
-            label_height_cm = 1 * cm
+            label_height_cm = 0.999 * cm
 
             # Set the spacing between labels
             x_spacing = label_width_cm + 0.25 * cm
@@ -192,7 +192,7 @@ def main():
 
             # Set the initial position for drawing
             x_start = 0.1  * cm
-            y_start = A4[1] - 1.48 * cm
+            y_start = A4[1] - 1.46 * cm
 
             # Iterate over the value groups
             for group in value_groups:
