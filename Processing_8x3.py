@@ -35,10 +35,13 @@ def main():
         #Extract the last entry in the DBGI_SPL_ID column of the samples collection
         container_id = 'container_8x3_id'
         params = {'sort[]': f'-{container_id}'}
-        collection_url = base_url + '/items/samples'
+        collection_url = base_url + '/items/Container_8x3'
         response = session.get(collection_url, params=params)
         last_value = response.json()['data'][0][container_id]
         last_number = int(last_value.split('_')[2])
+
+        #Define the first number of the list (last number + 1)
+        first_number = last_number + 1
 
         # Create template dataframe to reserve labels
         row_data = {'Reserved': 'True',
@@ -49,12 +52,15 @@ def main():
                                         'BG',
                                         'rack_location'])
 
+        # Generate the container IDs
+        template['container_8x3_id'] = ['container_8x3_{:06d}'.format(first_number + i) for i in range(number)]
+
+        # Print the resulting DataFrame
+        print(template)
+
         headers = {
                     'Content-Type': 'application/json'
         }
-        
-        #Define the first number of the list (last number + 1)
-        first_number = last_number + 1
         
         #Create a list with the asked codes beginning with the first number
         values = ['container_8x3_{:06d}'.format(first_number + i) for i in range(number)]
@@ -75,7 +81,7 @@ def main():
         pdf = canvas.Canvas(pdf_path, pagesize=A4)
 
         # Set the font size and line height
-        font_size = 7
+        font_size = 7.5
 
         # Set the dimensions of the labels in centimeters
         label_width_cm = 3.56 * cm
@@ -110,10 +116,10 @@ def main():
                 pos_y = y + (i // 5) * y_spacing
 
                 # Draw the label text
-                pdf.setFont("Helvetica", font_size)
-                pdf.drawString(pos_x + 0.55 * cm, pos_y + 0.9 * cm, value[:5])
-                pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
-                pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.4 * cm, value[5:])
+                pdf.setFont("Helvetica-Bold", font_size)
+                pdf.drawString(pos_x + 0.55 * cm, pos_y + 0.9 * cm, value[:10])
+                pdf.setFont("Helvetica-Bold", font_size)  # Reduce font size for the second line
+                pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.4 * cm, value[10:])
 
                 # Draw the QR code
                 qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=13.5, border=0 )
