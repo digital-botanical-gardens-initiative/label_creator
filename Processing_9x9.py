@@ -46,11 +46,11 @@ def main():
         # Create template dataframe to reserve labels
         row_data = {'Reserved': 'True',
                     'BG': location,
-                    'rack_location': storage}
+                    'box_location': storage}
         
         template = pd.DataFrame([row_data for _ in range(number)], columns=['Reserved',
                                         'BG',
-                                        'rack_location'])
+                                        'box_location'])
 
         # Generate the container IDs
         template['container_9x9_id'] = ['container_9x9_{:06d}'.format(first_number + i) for i in range(number)]
