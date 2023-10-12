@@ -7,6 +7,7 @@ import os
 import Processing_existing
 import Processing_new
 import Processing_8x3
+import Processing_9x9
 
 class MainPage(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -22,8 +23,11 @@ class MainPage(tk.Frame):
         button2 = tk.Button(self, text="Generate 8x3 labels from scratch", command=self.open_window2)
         button2.pack()
 
-        button3 = tk.Button(self, text="Print already existing labels from a table", command=self.open_window3)
+        button3 = tk.Button(self, text="Generate 9x9 labels from scratch", command=self.open_window3)
         button3.pack()
+
+        button4 = tk.Button(self, text="Print already existing labels from a table", command=self.open_window4)
+        button4.pack()
 
     def open_window1(self):
         # Hide the main page and open Window 1
@@ -42,6 +46,12 @@ class MainPage(tk.Frame):
         self.pack_forget()
         window3 = Window3(self.master)
         window3.pack()
+
+    def open_window4(self):
+        # Hide the main page and open Window 2
+        self.pack_forget()
+        window4 = Window4(self.master)
+        window4.pack()
 
 class Window1(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -214,8 +224,85 @@ class Window2(tk.Frame):
         Processing_8x3.main()
         #subprocess.run(["python", "Processing_new.py"])
 
-
+    
 class Window3(tk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        tk.Frame.__init__(self, parent, *args, **kwargs)
+
+        # Create a variable to store the entered text
+        self.username = tk.StringVar()
+        self.password = tk.StringVar()
+        self.number = tk.IntVar()
+        self.location = tk.StringVar()
+        self.storage = tk.StringVar()
+
+        # Create widgets for the main page
+        label = tk.Label(self, text="Generate 9x9 labels from scratch")
+        label.pack()
+
+        # Create text entry fields
+        label_username = tk.Label(self, text="Your directus username:")
+        label_username.pack()
+        entry_username = tk.Entry(self, textvariable=self.username)
+        entry_username.pack()
+
+        label_password = tk.Label(self, text="Your directus password:")
+        label_password.pack()
+        entry_password = tk.Entry(self, textvariable=self.password, show="*")
+        entry_password.pack()
+
+        #Number of labels
+        number_label = tk.Label(self, text="Number of labels you want:")
+        number_label.pack()
+        number_entry = tk.Entry(self, textvariable=self.number)
+        number_entry.pack()
+
+        #In which garden the samples will be used
+        location_label = tk.Label(self, text="Botanical garden where the 9x9 labels will be used:")
+        location_label.pack()
+        locations = ["JBUF", "JBN", "EMI"]
+        dropdown_location = tk.OptionMenu(self, self.location, *locations)
+        dropdown_location.pack()
+
+        #Where the labels will be stored
+        storage_label = tk.Label(self, text="Storage location:")
+        storage_label.pack()
+        storages = ["Fribourg", "Neuchâtel"]
+        dropdown_storage = tk.OptionMenu(self, self.storage, *storages)
+        dropdown_storage.pack()
+
+        output_label = tk.Label(self, text="Select the output path for the pdf file")
+        output_label.pack()
+        output_button = tk.Button(self, text="select path", command=self.output_folder)
+        output_button.pack()
+
+        button_submit = tk.Button(self, text="Submit", command=self.show_values)
+        button_submit.pack()
+
+        button_back = tk.Button(self, text="Back to Main Page", command=self.back_to_main)
+        button_back.pack()
+
+    def back_to_main(self):
+        # Destroy Window 2 and show the main page
+        self.destroy()
+        main_page.pack()
+
+    def output_folder(self):
+        os.environ['output_folder'] = filedialog.askdirectory()
+
+    def show_values(self):
+        # Retrieve the entered values
+        os.environ['username'] = self.username.get()
+        os.environ['password'] = self.password.get()
+        os.environ['number'] = str(self.number.get())
+        os.environ['location'] = self.location.get()
+        os.environ['storage'] = self.storage.get()
+        self.master.destroy()
+        Processing_9x9.main()
+        #subprocess.run(["python", "Processing_new.py"])
+
+
+class Window4(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
 
@@ -292,6 +379,7 @@ class Window3(tk.Frame):
         self.master.destroy()
         Processing_existing.main()
         #subprocess.run(["python", "Processing_existing.py"])
+
 
 # Create the main window
 window = tk.Tk()
