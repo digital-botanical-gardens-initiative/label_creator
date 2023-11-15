@@ -144,7 +144,7 @@ class Window1(tk.Frame):
         os.environ['paramsmall11'] = str(self.paramsmall1.get())
         os.environ['paramsmall21'] = str(self.paramsmall2.get())
         self.master.destroy()
-        Processing_new.main()
+        Processing_new
         #subprocess.run(["python", "Processing_new.py"])
 
 

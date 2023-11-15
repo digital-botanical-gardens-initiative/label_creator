@@ -116,3 +116,6 @@ def main():
     combobox_university.bind("<KeyRelease>", lambda event: root.after(50, update_university_suggestions))
 
     root.mainloop()
+
+if __name__ == "__main__":
+    main()
