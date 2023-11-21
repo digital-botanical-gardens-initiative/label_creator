@@ -45,7 +45,7 @@ def main():
 
                 collection_url = 'http://directus.dbgi.org/items/University'
 
-                #Add the codes to the database
+                #Add the site to the database
                 session.headers.update({'Authorization': f'Bearer {access_token}'})
                 response = session.post(url=collection_url, headers=headers, data=record)
                 if response.status_code == 200:
