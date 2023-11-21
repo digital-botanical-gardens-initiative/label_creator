@@ -2,8 +2,8 @@ import requests
 
 # Define the Directus base URL
 
-username = "edouard.bruelhart@unifr.ch" #Change it with your directus username
-password = "861510Eb.98" #Change it with your directus password
+username = "username" #Change it with your directus username
+password = "password" #Change it with your directus password
 base_url = 'http://directus.dbgi.org' #Change it with your directus instance
 collection = "Lab_Extracts" #Change it with the collection you want to fill
 donnor_col = "lab_extract_id" #Change it with the donnor column
