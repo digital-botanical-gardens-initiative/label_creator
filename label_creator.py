@@ -4,10 +4,11 @@
 import tkinter as tk
 from tkinter import filedialog
 import os
-import Processing_existing
 import Processing_new
-import Processing_8x3
+import Processing_containers
 import Select_university
+import Processing_existing
+
 
 class MainPage(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -36,19 +37,19 @@ class MainPage(tk.Frame):
         window1.pack()
 
     def open_window2(self):
-        # Hide the main page and open Window 1
+        # Hide the main page and open Window 2
         self.pack_forget()
         window1 = Window2(self.master)
         window1.pack()
 
     def open_window3(self):
-        # Hide the main page and open Window 2
+        # Hide the main page and open Window 3
         self.pack_forget()
         window3 = Window3(self.master)
         window3.pack()
 
     def open_window4(self):
-        # Hide the main page and open Window 2
+        # Hide the main page and open Window 4
         self.pack_forget()
         window4 = Window4(self.master)
         window4.pack()
@@ -144,8 +145,7 @@ class Window1(tk.Frame):
         os.environ['paramsmall11'] = str(self.paramsmall1.get())
         os.environ['paramsmall21'] = str(self.paramsmall2.get())
         self.master.destroy()
-        Processing_new
-        #subprocess.run(["python", "Processing_new.py"])
+        Processing_new.main()
 
 
 class Window2(tk.Frame):
@@ -155,12 +155,14 @@ class Window2(tk.Frame):
         # Create a variable to store the entered text
         self.username = tk.StringVar()
         self.password = tk.StringVar()
+        self.number_rows = tk.IntVar()
+        self.number_cols = tk.IntVar()
         self.number = tk.IntVar()
         self.location = tk.StringVar()
         self.storage = tk.StringVar()
 
         # Create widgets for the main page
-        label = tk.Label(self, text="Generate 8x3 labels from scratch")
+        label = tk.Label(self, text="Generate containers labels from scratch")
         label.pack()
 
         # Create text entry fields
@@ -174,23 +176,28 @@ class Window2(tk.Frame):
         entry_password = tk.Entry(self, textvariable=self.password, show="*")
         entry_password.pack()
 
+        #Nuber of rows
+        number_rows = tk.Label(self, text="Container's rows number:")
+        number_rows.pack()
+        number_entry_rows = tk.Entry(self, textvariable=self.number_rows)
+        number_entry_rows.pack()
+
+        #Nuber of columns
+        number_columns = tk.Label(self, text="Container's columns number:")
+        number_columns.pack()
+        number_entry_columns = tk.Entry(self, textvariable=self.number_cols)
+        number_entry_columns.pack()
+
         #Number of labels
         number_label = tk.Label(self, text="Number of labels you want:")
         number_label.pack()
         number_entry = tk.Entry(self, textvariable=self.number)
         number_entry.pack()
 
-        #In which garden the samples will be used
-        location_label = tk.Label(self, text="Botanical garden where the 8x3 labels will be used:")
-        location_label.pack()
-        locations = ["JBUF", "JBN", "EMI"]
-        dropdown_location = tk.OptionMenu(self, self.location, *locations)
-        dropdown_location.pack()
-
         #Where the labels will be stored
         storage_label = tk.Label(self, text="Storage location:")
         storage_label.pack()
-        storages = ["Fribourg", "Neuchâtel"]
+        storages = ["University of Fribourg", "Université de Neuchâtel"]
         dropdown_storage = tk.OptionMenu(self, self.storage, *storages)
         dropdown_storage.pack()
 
@@ -217,12 +224,13 @@ class Window2(tk.Frame):
         # Retrieve the entered values
         os.environ['username'] = self.username.get()
         os.environ['password'] = self.password.get()
+        os.environ['number_rows'] = str(self.number_rows.get())
+        os.environ['number_cols'] = str(self.number_cols.get())
         os.environ['number'] = str(self.number.get())
         os.environ['location'] = self.location.get()
         os.environ['storage'] = self.storage.get()
         self.master.destroy()
-        Processing_8x3.main()
-        #subprocess.run(["python", "Processing_new.py"])
+        Processing_containers.main()
 
     
 class Window3(tk.Frame):
@@ -288,7 +296,7 @@ class Window4(tk.Frame):
         label = tk.Label(self, text="Print already existing labels using a table")
         label.pack()
 
-        import_label = tk.Label(self, text="CSV is expected to have a unique column containing codes in format dbgi_123456, without header")
+        import_label = tk.Label(self, text="CSV is expected to have a unique column containing codes, without header")
         import_label.pack()
         import_button = tk.Button(self, text="Import your CSV", command=self.import_csv)
         import_button.pack()

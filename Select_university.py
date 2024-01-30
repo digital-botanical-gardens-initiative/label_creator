@@ -19,13 +19,6 @@ def main():
     unique_countries = dataf['country'].drop_duplicates().reset_index(drop=True)
     sorted_countries = pd.DataFrame(unique_countries).sort_values('country').reset_index(drop=True)
 
-    # Global variables
-    selected_country = None
-    selected_university = None
-    country_suggestions = []
-    university_suggestions = []
-
-
     def update_country_suggestions():
         global selected_country, country_suggestions
         selected_item = combobox_country.get()
@@ -83,29 +76,33 @@ def main():
             os.environ['site'] = str(selected_university)
             root.destroy()
             Processing_site.main()
-    
-    #def lauch():
         
 
     # Main Tkinter window
     root = tk.Tk()
     root.title("Fuzzy Matching Suggestions")
 
+    label1 = tk.Label(root, text="Search a country")
+    label1.grid(row=0, column=0, sticky="w")
+
     # Create a Country Combobox
     combobox_country = ttk.Combobox(root)
-    combobox_country.pack()
+    combobox_country.grid(row=1, column=0)
 
     # Create a Listbox for country suggestions
-    listbox_country = tk.Listbox(root, height=3, width=50, font=('Helvetica', 10))  # Adjust height and font size as needed
-    listbox_country.pack()
+    listbox_country = tk.Listbox(root, height=3, width=50, font=('Helvetica', 10))
+    listbox_country.grid(row=2, column=0)
+
+    label2 = tk.Label(root, text="Search an institution")
+    label2.grid(row=3, column=0, sticky="w")
 
     # Create a University Combobox
     combobox_university = ttk.Combobox(root)
-    combobox_university.pack()
+    combobox_university.grid(row=4, column=0)
 
     # Create a Listbox for university suggestions
-    listbox_university = tk.Listbox(root, height=7, width=50, font=('Helvetica', 10))  # Adjust height and font size as needed
-    listbox_university.pack()
+    listbox_university = tk.Listbox(root, height=7, width=50, font=('Helvetica', 10))
+    listbox_university.grid(row=5, column=0)
 
     # Bind the event handlers for country and university selection
     listbox_country.bind("<<ListboxSelect>>", on_country_select)

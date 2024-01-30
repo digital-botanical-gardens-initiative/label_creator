@@ -33,7 +33,6 @@ def main():
         response = session.post(login_url, json={'email': username, 'password': password})
         data = response.json()['data']
         access_token = data['access_token']
-        refresh_token = data['refresh_token']
 
         #Extract the last entry in the DBGI_SPL_ID column of the samples collection
         DBGI_SPL_ID = 'DBGI_SPL_ID'

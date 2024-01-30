@@ -11,14 +11,21 @@ def main():
     #Variables of the first window (generate from scratch)
     username = os.environ.get("username")
     password = os.environ.get("password")
-    location = os.environ.get("location")
     storage = os.environ.get("storage")
+    number_row = os.environ.get("number_rows")
+    number_col = os.environ.get("number_cols")
     number = int(os.environ.get("number"))
     output_folder = os.environ.get("output_folder")
 
     # Check if username and password are set (not empty)
-    if username and password and location and storage and number != 0 and output_folder:
+    if username and password and storage and number_row != 0 and number_col != 0 and number != 0 and output_folder:
 
+        #Construct the container prefix with the given dimensions (bigger value first):
+        if number_col > number_row:
+            container_prefix = "container_" + str(number_col) + "x" + str(number_row) + "_"
+        else:
+            container_prefix = "container_" + str(number_row) + "x" + str(number_col) + "_"
+        
         # Define the Directus base URL
         base_url = 'http://directus.dbgi.org'
 
@@ -30,30 +37,36 @@ def main():
         response = session.post(login_url, json={'email': username, 'password': password})
         data = response.json()['data']
         access_token = data['access_token']
-        refresh_token = data['refresh_token']
 
-        #Extract the last entry in the DBGI_SPL_ID column of the samples collection
-        container_id = 'container_8x3_id'
+        # Update the header to include access token for the request
+        session.headers.update({'Authorization': f'Bearer {access_token}'})
+
+        #Extract the last entry in the container_id column for the specific prefix
+        container_id = "container_id"
+        # Construct the filter as query parameters
         params = {'sort[]': f'-{container_id}'}
-        collection_url = base_url + '/items/Container_8x3'
+        
+        collection_url = base_url + '/items/Mobile_Container/' + f'?filter[{container_id}][_starts_with]={container_prefix}&&limit=1' 
         response = session.get(collection_url, params=params)
-        last_value = response.json()['data'][0][container_id]
-        last_number = int(last_value.split('_')[2])
+        data = response.json()
+        last_value = data['data'][0][container_id] if data['data'] else "null"
+        if last_value != "null":
+            last_number = int(last_value.split('_')[2])
+        else:
+            last_number = 0
 
         #Define the first number of the list (last number + 1)
         first_number = last_number + 1
 
         # Create template dataframe to reserve labels
-        row_data = {'Reserved': 'True',
-                    'BG': location,
-                    'rack_location': storage}
+        row_data = {'reserved': 'True',
+                    'container_location': storage}
         
-        template = pd.DataFrame([row_data for _ in range(number)], columns=['Reserved',
-                                        'BG',
-                                        'rack_location'])
+        template = pd.DataFrame([row_data for _ in range(number)], columns=['reserved',
+                                        'container_location'])
 
         # Generate the container IDs
-        template['container_8x3_id'] = ['container_8x3_{:06d}'.format(first_number + i) for i in range(number)]
+        template['container_id'] = [f'{container_prefix}''{:06d}'.format(first_number + i) for i in range(number)]
 
         # Print the resulting DataFrame
         print(template)
@@ -63,10 +76,9 @@ def main():
         }
         
         #Create a list with the asked codes beginning with the first number
-        values = ['container_8x3_{:06d}'.format(first_number + i) for i in range(number)]
+        values = [f'{container_prefix}''{:06d}'.format(first_number + i) for i in range(number)]
         
         records = template.to_json(orient="records")
-        print(records)
 
         #Add the codes to the database
         session.headers.update({'Authorization': f'Bearer {access_token}'})
@@ -77,7 +89,7 @@ def main():
         value_groups = [values[i:i + 80] for i in range(0, len(values), 80)]
 
         # Set up the PDF canvas
-        pdf_path = output_folder + "/8x3_generated.pdf"
+        pdf_path = output_folder + "/container_labels_generated.pdf"
         pdf = canvas.Canvas(pdf_path, pagesize=A4)
 
         # Set the font size and line height
@@ -117,9 +129,9 @@ def main():
 
                 # Draw the label text
                 pdf.setFont("Helvetica-Bold", font_size)
-                pdf.drawString(pos_x + 0.55 * cm, pos_y + 0.9 * cm, value[:10])
+                pdf.drawString(pos_x + 0.4 * cm, pos_y + 0.9 * cm, value[:10])
                 pdf.setFont("Helvetica-Bold", font_size)  # Reduce font size for the second line
-                pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.4 * cm, value[10:])
+                pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.4 * cm, value[10:])
 
                 # Draw the QR code
                 qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=13.5, border=0 )
