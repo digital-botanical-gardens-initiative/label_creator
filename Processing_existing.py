@@ -71,9 +71,7 @@ def main():
                     pos_x = x + (i % 5) * x_spacing
                     pos_y = y + (i // 5) * y_spacing
 
-                    if (df['char_length'][i] <= 2).any():
-
-                        print("small value")
+                    if (df['char_length'][i] <= 1.9).any():
 
                         # Set the font size
                         font_size = 14
@@ -97,7 +95,7 @@ def main():
                         qr_img.save(qr_img_path)
                         pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=1.35 * cm, height=1.35 * cm)
 
-                    elif (df['char_length'][i] > 2 and df['char_length'][i] <= 4).any():
+                    elif (df['char_length'][i] > 1.9 and df['char_length'][i] <= 3.8).any():
 
                         # Set the font size
                         font_size = 14
@@ -126,7 +124,7 @@ def main():
                         qr_img.save(qr_img_path)
                         pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=1.35 * cm, height=1.35 * cm)
 
-                    elif (df['char_length'][i] > 4 and df['char_length'][i] <= 8).any():
+                    elif (df['char_length'][i] > 3.8 and df['char_length'][i] <= 7).any():
 
                         # Set the font size
                         font_size = 7
@@ -155,7 +153,7 @@ def main():
                         qr_img.save(qr_img_path)
                         pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=1.35 * cm, height=1.35 * cm)
 
-                    elif (df['char_length'][i] > 8 and df['char_length'][i] <= 10).any():
+                    elif (df['char_length'][i] > 7 and df['char_length'][i] <= 9.5).any():
 
                         # Set the font size
                         font_size = 7
@@ -188,17 +186,14 @@ def main():
 
                     else:
 
-                        print("very big values")
-
                         # Draw the label text
-                        font_size = 12
+                        font_size = 7
                         pdf.setFont("Helvetica", font_size)
-                        pdf.drawString(pos_x + 0.15 * cm, pos_y + 1.2 * cm, "Scan me")
-                        font_size = 7.5
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 1.2 * cm, value[:8])
                         pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
-                        pdf.drawString(pos_x + 0.34 * cm, pos_y + 0.8 * cm, "too long")
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.8 * cm, value[8:16])
                         pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
-                        pdf.drawString(pos_x + 0.30 * cm, pos_y + 0.4 * cm, "to display")
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.4 * cm, value[16:23] + "...")
 
                         # Draw the QR code
                         qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=13.5, border=0 )
