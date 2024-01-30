@@ -289,11 +289,10 @@ class Window4(tk.Frame):
         self.number_ext = tk.StringVar()
         self.number_inj = tk.StringVar()
         self.parambig = tk.IntVar()
-        self.paramsmall1 = tk.IntVar(value=1)
-        self.paramsmall2 = tk.IntVar(value=1)
+        self.paramsmall = tk.IntVar()
 
         # Create widgets for the main page
-        label = tk.Label(self, text="Print already existing labels using a table")
+        label = tk.Label(self, text="Print already existing labels using a CSV")
         label.pack()
 
         import_label = tk.Label(self, text="CSV is expected to have a unique column containing codes, without header")
@@ -301,35 +300,18 @@ class Window4(tk.Frame):
         import_button = tk.Button(self, text="Import your CSV", command=self.import_csv)
         import_button.pack()
 
-        # Create text entry fields
-        number_ext_label = tk.Label(self, text="Number of the extraction (let empty if you want big labels):")
-        number_ext_label.pack()
-        numbers_ext = [str(num).zfill(2) for num in range(1, 100)]
-        dropdown_number_ext = tk.OptionMenu(self, self.number_ext, *numbers_ext)
-        dropdown_number_ext.pack()
-
-        number_inj_label = tk.Label(self, text="Number of the injection (let empty if you want big labels or extraction labels):")
-        number_inj_label.pack()
-        numbers_inj = [str(num).zfill(2) for num in range(1, 100)]
-        dropdown_number_inj = tk.OptionMenu(self, self.number_inj, *numbers_inj)
-        dropdown_number_inj.pack()
-
         output_label = tk.Label(self, text="Select the output path for the pdf files")
         output_label.pack()
         output_button = tk.Button(self, text="select path", command=self.output_folder)
         output_button.pack()
 
         #Choose big labels
-        check_big = tk.Checkbutton(self, text="big labels (dbgi_123456)", variable=self.parambig)
+        check_big = tk.Checkbutton(self, text="big labels (avery L4732)", variable=self.parambig)
         check_big.pack()
 
         #Choose small labels extraction
-        check_small1 = tk.Checkbutton(self, text="small labels for extraction (dbgi_123456_01)", variable=self.paramsmall1)
-        check_small1.pack()
-
-        #Choose small labels for injection
-        check_small2 = tk.Checkbutton(self, text="small labels for injection (dbgi_123456_01_01)", variable=self.paramsmall2)
-        check_small2.pack()
+        check_small = tk.Checkbutton(self, text="small labels (avery L4731)", variable=self.paramsmall)
+        check_small.pack()
 
         button_submit = tk.Button(self, text="Submit", command=self.show_values)
         button_submit.pack()
@@ -350,14 +332,10 @@ class Window4(tk.Frame):
 
     def show_values(self):
         # Retrieve the entered values
-        os.environ['number_ext'] = str(self.number_ext.get())
-        os.environ['number_inj'] = str(self.number_inj.get())
-        os.environ['parambig2'] = str(self.parambig.get())
-        os.environ['paramsmall12'] = str(self.paramsmall1.get())
-        os.environ['paramsmall22'] = str(self.paramsmall2.get())
+        os.environ['parambig'] = str(self.parambig.get())
+        os.environ['paramsmall'] = str(self.paramsmall.get())
         self.master.destroy()
-        Processing_existing.main()
-        #subprocess.run(["python", "Processing_existing.py"])
+        #Processing_existing.main()
 
 
 # Create the main window
