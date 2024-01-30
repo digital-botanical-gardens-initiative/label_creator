@@ -1,5 +1,7 @@
 # To convert this script into a .exe file: pyinstaller --onefile label_creator.py in anaconda prompt
 
+"test gui"
+
 
 import tkinter as tk
 from tkinter import filedialog
