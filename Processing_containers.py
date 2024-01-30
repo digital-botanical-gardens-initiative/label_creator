@@ -156,4 +156,5 @@ def main():
 
     else:
         print("Username and/or password not set. The script will be ignored.")
+        ls
     # Needs still to add the generated code on directus
