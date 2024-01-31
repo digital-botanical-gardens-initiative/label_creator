@@ -1,3 +1,6 @@
+# This script is a tool to manually alter the directus database for multiple columns, 
+# please handle with care
+
 import requests
 
 # Define the Directus base URL
