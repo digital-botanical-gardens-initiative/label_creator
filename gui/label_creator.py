@@ -1,8 +1,5 @@
 # To convert this script into a .exe file: pyinstaller --onefile label_creator.py in anaconda prompt
 
-"test gui"
-
-
 import tkinter as tk
 from tkinter import filedialog
 import os
@@ -337,7 +334,7 @@ class Window4(tk.Frame):
         os.environ['parambig'] = str(self.parambig.get())
         os.environ['paramsmall'] = str(self.paramsmall.get())
         self.master.destroy()
-        #Processing_existing.main()
+        Processing_existing.main()
 
 
 # Create the main window

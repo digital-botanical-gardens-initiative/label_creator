@@ -10,16 +10,10 @@ import math
 def main():
 
     #Variables of the second window (from existing)
-    #file_path = os.environ.get("file_path")
-    #output_folder = os.environ.get("output_folder")
-    #parambig = os.environ.get("parambig")
-    #paramsmall = os.environ.get("paramsmall")
-    
-
-    file_path = "C:/Users/edoua/Desktop/DBGI_project/label_creator/tests/test.csv"
-    output_folder = "C:/Users/edoua/Desktop/DBGI_project/label_creator/tests/"
-    parambig = '1'
-    paramsmall = '1'
+    file_path = os.environ.get("file_path")
+    output_folder = os.environ.get("output_folder")
+    parambig = os.environ.get("parambig")
+    paramsmall = os.environ.get("paramsmall")
 
     if file_path and output_folder and (parambig != '0' or paramsmall != '0'):
 
@@ -78,7 +72,7 @@ def main():
 
                         # Draw the label text
                         pdf.setFont("Helvetica", font_size)
-                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.9 * cm, value)
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.8 * cm, value)
 
                         # Draw the QR code
                         qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=13.5, border=0 )
@@ -105,9 +99,9 @@ def main():
 
                         # Draw the label text
                         pdf.setFont("Helvetica", font_size)
-                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.9 * cm, value[:semi_length])
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 1 * cm, value[:semi_length])
                         pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
-                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.4 * cm, value[semi_length:])
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.5 * cm, value[semi_length:])
 
                         # Draw the QR code
                         qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=13.5, border=0 )
@@ -134,9 +128,9 @@ def main():
 
                         # Draw the label text
                         pdf.setFont("Helvetica", font_size)
-                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.9 * cm, value[:semi_length])
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 1 * cm, value[:semi_length])
                         pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
-                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.4 * cm, value[semi_length:])
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.5 * cm, value[semi_length:])
 
                         # Draw the QR code
                         qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=13.5, border=0 )
@@ -226,9 +220,6 @@ def main():
             pdf_path = output_folder + "/small_labels_existing.pdf"
             pdf = canvas.Canvas(pdf_path, pagesize=A4)
 
-            # Set the font size and line height
-            font_size = 8
-
             # Set the dimensions of the labels in centimeters
             label_width_cm = 2.54 * cm
             label_height_cm = 0.999 * cm
@@ -261,27 +252,139 @@ def main():
                     pos_x = x + (i % 7) * x_spacing
                     pos_y = y + (i // 7) * y_spacing
 
-                    # Draw the label text
-                    pdf.setFont("Helvetica", font_size)
-                    pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.9 * cm, value[:5])
-                    #pdf.setFont("Helvetica", font_size)  # Reduce font size for the second line
-                    pdf.drawString(pos_x + 0.3 * cm, pos_y + 0.55 * cm, value[5:11])
-                    pdf.drawString(pos_x + 0.5 * cm, pos_y + 0.25 * cm, value[11:])
+                    if (df['char_length'][i] <= 1.9).any():
 
-                    # Draw the QR code
-                    qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
-                    qr.add_data(value)
-                    qr.make(fit=True)
-                    qr_img = qr.make_image(fill_color="black", back_color="white")
+                        # Set the font size
+                        font_size = 8
 
-                    # Calculate the position for drawing the QR code
-                    qr_pos_x = pos_x + 1.5 * cm
-                    qr_pos_y = pos_y + 0.3 * cm
+                        # Draw the label text
+                        pdf.setFont("Helvetica", font_size)
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.6 * cm, value)
 
-                    # Draw the QR code
-                    qr_img_path = "qr_code.png"
-                    qr_img.save(qr_img_path)
-                    pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=0.8 * cm, height=0.8 * cm)
+                        # Draw the QR code
+                        qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
+                        qr.add_data(value)
+                        qr.make(fit=True)
+                        qr_img = qr.make_image(fill_color="black", back_color="white")
+
+                        # Calculate the position for drawing the QR code
+                        qr_pos_x = pos_x + 1.5 * cm
+                        qr_pos_y = pos_y + 0.3 * cm
+
+                        # Draw the QR code
+                        qr_img_path = "qr_code.png"
+                        qr_img.save(qr_img_path)
+                        pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=0.8 * cm, height=0.8 * cm)
+
+                    elif (df['char_length'][i] > 1.9 and df['char_length'][i] <= 3.6).any():
+
+                        # Set the font size
+                        font_size = 8
+
+                        length = len(value)
+                        semi_length = round(length/2)
+
+                        # Draw the label text
+                        pdf.setFont("Helvetica", font_size)
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.8 * cm, value[:semi_length])
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.45 * cm, value[semi_length:])
+
+                        # Draw the QR code
+                        qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
+                        qr.add_data(value)
+                        qr.make(fit=True)
+                        qr_img = qr.make_image(fill_color="black", back_color="white")
+
+                        # Calculate the position for drawing the QR code
+                        qr_pos_x = pos_x + 1.5 * cm
+                        qr_pos_y = pos_y + 0.3 * cm
+
+                        # Draw the QR code
+                        qr_img_path = "qr_code.png"
+                        qr_img.save(qr_img_path)
+                        pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=0.8 * cm, height=0.8 * cm)
+
+                    elif (df['char_length'][i] > 3.6 and df['char_length'][i] <= 7).any():
+
+                        # Set the font size
+                        font_size = 8
+
+                        length = len(value)
+                        third_length = round(length/3)
+
+                        # Draw the label text
+                        pdf.setFont("Helvetica", font_size)
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.85 * cm, value[:third_length])
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.6 * cm, value[third_length:third_length*2])
+                        pdf.drawString(pos_x + 0.07 * cm, pos_y + 0.35 * cm, value[third_length*2:])
+
+                        # Draw the QR code
+                        qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
+                        qr.add_data(value)
+                        qr.make(fit=True)
+                        qr_img = qr.make_image(fill_color="black", back_color="white")
+
+                        # Calculate the position for drawing the QR code
+                        qr_pos_x = pos_x + 1.5 * cm
+                        qr_pos_y = pos_y + 0.3 * cm
+
+                        # Draw the QR code
+                        qr_img_path = "qr_code.png"
+                        qr_img.save(qr_img_path)
+                        pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=0.8 * cm, height=0.8 * cm)
+
+                    elif (df['char_length'][i] > 7 and df['char_length'][i] <= 9.2).any():
+
+                        # Set the font size
+                        font_size = 6
+
+                        length = len(value)
+                        third_length = round(length/3)
+
+                        # Draw the label text
+                        pdf.setFont("Helvetica", font_size)
+                        pdf.drawString(pos_x + 0.06 * cm, pos_y + 0.85 * cm, value[:third_length])
+                        pdf.drawString(pos_x + 0.06 * cm, pos_y + 0.6 * cm, value[third_length:third_length*2])
+                        pdf.drawString(pos_x + 0.06 * cm, pos_y + 0.35 * cm, value[third_length*2:])
+
+                        # Draw the QR code
+                        qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
+                        qr.add_data(value)
+                        qr.make(fit=True)
+                        qr_img = qr.make_image(fill_color="black", back_color="white")
+
+                        # Calculate the position for drawing the QR code
+                        qr_pos_x = pos_x + 1.5 * cm
+                        qr_pos_y = pos_y + 0.3 * cm
+
+                        # Draw the QR code
+                        qr_img_path = "qr_code.png"
+                        qr_img.save(qr_img_path)
+                        pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=0.8 * cm, height=0.8 * cm)
+
+                    else:
+
+                        # Draw the label text
+                        font_size = 6
+                        pdf.setFont("Helvetica", font_size)
+                        pdf.drawString(pos_x + 0.06 * cm, pos_y + 0.85 * cm, value[:7])
+                        pdf.drawString(pos_x + 0.06 * cm, pos_y + 0.6 * cm, value[7:14])
+                        pdf.drawString(pos_x + 0.06 * cm, pos_y + 0.35 * cm, value[14:20] + "...")
+
+                        # Draw the QR code
+                        qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=8, border=0 )
+                        qr.add_data(value)
+                        qr.make(fit=True)
+                        qr_img = qr.make_image(fill_color="black", back_color="white")
+
+                        # Calculate the position for drawing the QR code
+                        qr_pos_x = pos_x + 1.5 * cm
+                        qr_pos_y = pos_y + 0.3 * cm
+
+                        # Draw the QR code
+                        qr_img_path = "qr_code.png"
+                        qr_img.save(qr_img_path)
+                        pdf.drawInlineImage(qr_img_path, qr_pos_x, qr_pos_y, width=0.8 * cm, height=0.8 * cm)
 
                 # Move to the next page
                 pdf.showPage()
@@ -319,6 +422,3 @@ def get_screen_ppi():
     ppi = screen_diagonal_pixels / screen_diagonal_inches
     root.destroy()
     return ppi
-
-
-main()
