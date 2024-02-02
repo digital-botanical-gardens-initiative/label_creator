@@ -3,5 +3,5 @@ dist
 __pycache__
 qr_code.png
 tests
-cli
-gui
+/cli/qr_code.png
+/gui/qr_code.png
