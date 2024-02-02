@@ -4,7 +4,8 @@ import tkinter as tk
 from tkinter import filedialog
 import os
 import gui_Processing_new
-import gui_Processing_containers
+import gui_Processing_mobile_containers
+import gui_Processing_static_containers
 import gui_Select_university
 import gui_Processing_existing
 
@@ -20,8 +21,11 @@ class MainPage(tk.Frame):
         button1 = tk.Button(self, text="Generate labels from scratch", command=self.open_window1)
         button1.pack()
 
-        button2 = tk.Button(self, text="Generate containers labels from scratch", command=self.open_window2)
+        button2 = tk.Button(self, text="Generate mobile containers labels from scratch", command=self.open_window2)
         button2.pack()
+
+        button_static_container = tk.Button(self, text="Generate static containers labels from scratch", command=self.open_window_static_container)
+        button_static_container.pack()
 
         button4 = tk.Button(self, text="Print already existing labels from a table", command=self.open_window4)
         button4.pack()
@@ -37,6 +41,8 @@ class MainPage(tk.Frame):
 
         button3 = tk.Button(self, text="Add a new site", command=self.open_window3)
         button3.pack()
+
+
 
     def open_window1(self):
         # Hide the main page and open Window 1
@@ -61,6 +67,13 @@ class MainPage(tk.Frame):
         self.pack_forget()
         window4 = Window4(self.master)
         window4.pack()
+
+    def open_window_static_container(self):
+        # Hide the main page and open Window 4
+        self.pack_forget()
+        window_static_container = WindowStaticContainer(self.master)
+        window_static_container.pack()
+
 
 class Window1(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -170,7 +183,7 @@ class Window2(tk.Frame):
         self.storage = tk.StringVar()
 
         # Create widgets for the main page
-        label = tk.Label(self, text="Generate containers labels from scratch")
+        label = tk.Label(self, text="Generate mobile containers labels from scratch")
         label.pack()
 
         # Create text entry fields
@@ -195,6 +208,75 @@ class Window2(tk.Frame):
         number_columns.pack()
         number_entry_columns = tk.Entry(self, textvariable=self.number_cols)
         number_entry_columns.pack()
+
+        #Number of labels
+        number_label = tk.Label(self, text="Number of labels you want:")
+        number_label.pack()
+        number_entry = tk.Entry(self, textvariable=self.number)
+        number_entry.pack()
+
+
+        output_label = tk.Label(self, text="Select the output path for the pdf file")
+        output_label.pack()
+        output_button = tk.Button(self, text="select path", command=self.output_folder)
+        output_button.pack()
+
+        button_submit = tk.Button(self, text="Submit", command=self.show_values)
+        button_submit.pack()
+
+        button_back = tk.Button(self, text="Back to Main Page", command=self.back_to_main)
+        button_back.pack()
+
+    def back_to_main(self):
+        # Destroy Window 2 and show the main page
+        self.destroy()
+        main_page.pack()
+
+    def output_folder(self):
+        os.environ['output_folder'] = filedialog.askdirectory()
+
+    def show_values(self):
+        # Retrieve the entered values
+        os.environ['username'] = self.username.get()
+        os.environ['password'] = self.password.get()
+        os.environ['number_rows'] = str(self.number_rows.get())
+        os.environ['number_cols'] = str(self.number_cols.get())
+        os.environ['number'] = str(self.number.get())
+        os.environ['location'] = self.location.get()
+        os.environ['storage'] = self.storage.get()
+        self.master.destroy()
+        gui_Processing_mobile_containers.main()
+
+
+
+class WindowStaticContainer(tk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        tk.Frame.__init__(self, parent, *args, **kwargs)
+
+        # Create a variable to store the entered text
+        self.username = tk.StringVar()
+        self.password = tk.StringVar()
+        self.number_rows = tk.IntVar()
+        self.number_cols = tk.IntVar()
+        self.number = tk.IntVar()
+        self.location = tk.StringVar()
+        self.storage = tk.StringVar()
+
+        # Create widgets for the main page
+        label = tk.Label(self, text="Generate static containers labels from scratch")
+        label.pack()
+
+        # Create text entry fields
+        label_username = tk.Label(self, text="Your directus username:")
+        label_username.pack()
+        entry_username = tk.Entry(self, textvariable=self.username)
+        entry_username.pack()
+
+        label_password = tk.Label(self, text="Your directus password:")
+        label_password.pack()
+        entry_password = tk.Entry(self, textvariable=self.password, show="*")
+        entry_password.pack()
+
 
         #Number of labels
         number_label = tk.Label(self, text="Number of labels you want:")
@@ -238,7 +320,7 @@ class Window2(tk.Frame):
         os.environ['location'] = self.location.get()
         os.environ['storage'] = self.storage.get()
         self.master.destroy()
-        gui_Processing_containers.main()
+        gui_Processing_static_containers.main()
 
     
 class Window3(tk.Frame):
