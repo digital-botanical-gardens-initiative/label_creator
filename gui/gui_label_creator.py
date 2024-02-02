@@ -3,10 +3,10 @@
 import tkinter as tk
 from tkinter import filedialog
 import os
-import Processing_new
-import Processing_containers
-import Select_university
-import Processing_existing
+import gui_Processing_new
+import gui_Processing_containers
+import gui_Select_university
+import gui_Processing_existing
 
 
 class MainPage(tk.Frame):
@@ -153,7 +153,7 @@ class Window1(tk.Frame):
         os.environ['paramsmall11'] = str(self.paramsmall1.get())
         os.environ['paramsmall21'] = str(self.paramsmall2.get())
         self.master.destroy()
-        Processing_new.main()
+        gui_Processing_new.main()
 
 
 class Window2(tk.Frame):
@@ -238,7 +238,7 @@ class Window2(tk.Frame):
         os.environ['location'] = self.location.get()
         os.environ['storage'] = self.storage.get()
         self.master.destroy()
-        Processing_containers.main()
+        gui_Processing_containers.main()
 
     
 class Window3(tk.Frame):
@@ -286,7 +286,7 @@ class Window3(tk.Frame):
         os.environ['username'] = self.username.get()
         os.environ['password'] = self.password.get()
         self.master.destroy()
-        Select_university.main()
+        gui_Select_university.main()
 
 
 class Window4(tk.Frame):
@@ -343,7 +343,7 @@ class Window4(tk.Frame):
         os.environ['parambig'] = str(self.parambig.get())
         os.environ['paramsmall'] = str(self.paramsmall.get())
         self.master.destroy()
-        Processing_existing.main()
+        gui_Processing_existing.main()
 
 
 # Create the main window
