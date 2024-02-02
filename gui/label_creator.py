@@ -23,11 +23,20 @@ class MainPage(tk.Frame):
         button2 = tk.Button(self, text="Generate containers labels from scratch", command=self.open_window2)
         button2.pack()
 
-        button3 = tk.Button(self, text="Add a new site", command=self.open_window3)
-        button3.pack()
-
         button4 = tk.Button(self, text="Print already existing labels from a table", command=self.open_window4)
         button4.pack()
+
+        label = tk.Label(self, text="")
+        label.pack()
+
+        label = tk.Label(self, text="")
+        label.pack()
+
+        label = tk.Label(self, text="Add a new university member to the database")
+        label.pack()
+
+        button3 = tk.Button(self, text="Add a new site", command=self.open_window3)
+        button3.pack()
 
     def open_window1(self):
         # Hide the main page and open Window 1
