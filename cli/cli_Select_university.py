@@ -4,7 +4,7 @@ from tkinter import ttk
 from fuzzywuzzy import process
 import pandas as pd
 import os
-import Processing_site
+import cli.cli_Processing_site as cli_Processing_site
 
 def main():
 
@@ -75,7 +75,7 @@ def main():
             os.environ['password'] = str(password)
             os.environ['site'] = str(selected_university)
             root.destroy()
-            Processing_site.main()
+            cli_Processing_site.main()
         
 
     # Main Tkinter window
